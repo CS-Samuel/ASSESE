@@ -1,6 +1,6 @@
 <?php
-$settings = ['username'=>'root',
-	     'password' => 'mammon33',
-	     'dbname' => 'bozo'
+$settings = ['username'=>'USERNAME',
+	     'password' => 'PASSWORD',
+	     'dbname' => 'DATABASE NAME'
 ];
 
