@@ -1,0 +1,75 @@
+<html>
+<head>
+<h2>EVALUATION FORM </h2>
+</head>
+<body>
+<form action =info.php method = "post">
+<table> 
+<tr>  
+<td>Student Name :</td>
+<td><input type="text" name="student1" required></td>
+</tr>  
+<tr>    
+<td>A. Has the group member attended most meetings? Y/N </td>
+<td><select name = "a" required>
+        <option value = "">Please Select</option>
+        <option value = "yes" required>YES</option>
+        <option value = "no" required>NO</option>
+    </select></td>
+</tr>
+<tr>      
+<td>B. Has the group member been prepared for group meetings? Y/N </td>
+<td><select name = "b" required>
+        <option value = "">Please Select</option>
+        <option value = "yes" required>YES</option>
+        <option value = "no" required>NO</option>
+    </select></td>
+</tr>
+<tr>      
+<td>C. Has the group member participated positively in meetings? Y/N</td> 
+<td><select name = "c" required>
+        <option value = "">Please Select</option>
+        <option value = "yes" required>YES</option>
+        <option value = "no" required>NO</option>
+    </select></td>
+</tr>
+<tr>        
+<td>D. Has the group member performed their share of the work, as assigned? Y/N </td>
+<td><select name = "d" required>
+        <option value = "">Please Select</option>
+        <option value = "yes" required>YES</option>
+        <option value = "no" required>NO</option>
+    </select></td>
+</tr>
+<tr>               
+<td>E. Has the group member been able to work well with others? Y/N </td> 
+<td><select name = "e" required>
+        <option value = "">Please Select</option>
+        <option value = "yes" required>YES</option>
+        <option value = "no" required>NO</option>
+    </select></td>
+</tr>
+<tr>
+<td>F. Rate the level of initiative this group member has exhibited in the project. </td>
+<td><input type="number" name="quantity1"  min="0" max="10" step="0.1" required></td>
+</tr>            
+<tr>
+<td>G. Rate the quality of this group member's inputt to group discussions and design issues. </td> 
+<td><input type="number" name="quantity2"  min="0" max="10" step="0.1" required></td>
+</tr>        
+<tr>
+<td>H. Rate the overall value of this group member to the project. </td> 
+<td><input type="number" name="quantity3" min="0" max="10" step="0.1" required></td>
+</tr>
+<tr>
+<td>Percentage of work done. </td> 
+<td><input type="number" name="quantity4" min="0" max="100" step="1" required></td>
+</tr>           
+<tr>
+<td><input type="submit" name="submit" value ="NEXT">
+<input type="button" name="back" value="BACK" onclick= "window.location='evaluationMain.php'"></td>
+</tr>
+</table>
+</form>
+</body>
+</html>

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<h2>STUDENT LOGIN</h2>
+</head>
+<body>
+<form action = validation.php method="post">
+<table>
+<tr>
+<td>Course Name :</td>
+<td><select name = "cname" required>
+        <option value = " ">Select The Course</option>
+        <?php while ($row2 = mysqli_fetch_array($result)):;?>
+        <option value = "<?php echo $row2[1];?>" required><?php echo $row2[1];?></option>
+        <?php endwhile ?>
+    </select></td>
+</tr>
+<tr>
+<td>Enter Password :</td>
+<td><input type="password" name="password" required></td>
+</tr>
+<tr>   
+<td><input type="submit" value="Login" ></td>
+<td><input type="button" value="Cancel"onclick="window.location='student.php'"></td>
+</tr>
+</table>
+</form>
+</body>
+</html>

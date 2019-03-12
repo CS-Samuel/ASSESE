@@ -1,0 +1,109 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="./project_css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="./project_css/studenthomepage.css">
+        <script src ="cookie.js"></script>
+        <script src="jquery-3.3.1.js"></script> 
+        <script src="jquery-3.3.1.min.js"></script> 
+        <title>ASESSE Evaluation</title>
+    </head>
+    <body>
+        <div class="container-fluid justify-content-center">
+            <nav class="navbar text-center">
+                <div class="col">
+                    <h1 class="font-weight-bold text-dark text-center">ASESSE</h1>
+            </nav>
+        </div>
+
+
+        <div class="container-fluid justify-content-center text-center">
+
+{% comment %} Apply this style to elements that should not be printed, i.e. buttons  {% endcomment %}
+
+<style media = print>
+.noPrint{
+     display: none; 
+}
+</style>
+
+{% comment %} Divisions to be populated by javascript {% endcomment %}
+<div id = "heading"></div>
+<div id = "buttons" class = "noPrint"></div>
+<div id = "courseName"></div>
+<div id = "results"></div>
+
+<script>
+
+// Check Cookie for access
+var accessCode = getCookie("ASSESE");   
+if (accessCode != -1){window.location = "instructor.html";}
+
+// Access ID passed in url
+var groupID = window.location.href.split("=")[1]
+var data = {group_ID: groupID};
+
+// Group Name
+$.post("instructor.php/groupGroupName", data)
+.done(function(data){
+    var html = "<h1>Group Name: " + data[0]['GroupName'] + " </h1>";
+    $('#heading').html(html);
+    
+})
+
+// Course Name
+$.post("instructor.php/groupCourseName", data)
+.done(function(data){
+    var html = "<h2>Course Name: " + data[0]['Name'] + " </h2>";
+    $('#courseName').html(html);
+    
+     html = '';
+    html += "<button class=\"btn btn-default bg-secondary text-white\" onclick = 'coursePage("
+    html += data[0]['Course ID']
+    html += ")'>Back to Course Page</button>";
+
+    html += "<button class=\"btn btn-default bg-dark text-white\" onclick = 'mainPage()'>Main Page</button>";
+    html += "<button class=\"btn btn-default bg-secondary text-white\" onclick = 'window.print()'>Print Page</button>";
+    html += "<button class=\"btn btn-default bg-dark text-white\" onclick = 'logOut()'>Log Out</button>";
+
+     $('#buttons').html(html);
+})
+
+// Student Info 
+
+$.post("instructor.php/groupStudentInfo", data)
+.done(function(data){
+    html = '';
+    for (i=0; i<data.length; ++i){
+        
+        html += 'Student Name: ' + data[i]['Student Name'] + "<BR><BR>";
+        html += "Question A Results: " + data[i]['Question A Results'] + "<BR><BR>"
+        html += "Question B Results: " + data[i]['Question B Results'] + "<BR><BR>"
+        html += "Question C Results: " + data[i]['Question C Results'] + "<BR><BR>"
+        html += "Question D Results: " + data[i]['Question D Results'] + "<BR><BR>"
+        html += "Question E Results: " + data[i]['Question E Results'] + "<BR><BR>"
+        html += "Question F Results: " + data[i]['Question F Results'] + "<BR><BR>"
+        html += "Question G Results: " + data[i]['Question G Results'] + "<BR><BR>"
+        html += "Question H Results: " + data[i]['Question H Results'] + "<BR><BR>"
+        html += "Percent Work Done Average: " + data[i]['Percent Work Average'] + "<BR><BR><BR><BR>"
+    }
+
+  $('#results').html(html);
+})
+
+
+// Redirect to coursePage
+function coursePage(courseCode){
+    window.location = "courses.html?cID=" + courseCode
+}
+
+</script>
+        </div>
+    </body>
+    <footer>
+            <div class="footer">© 2018 Copyright</div>
+        </footer>
+</html>

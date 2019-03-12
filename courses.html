@@ -1,0 +1,342 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="./project_css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="./project_css/studenthomepage.css">
+        <script src ="cookie.js"></script>
+        <script src="jquery-3.3.1.js"></script> 
+        <script src="jquery-3.3.1.min.js"></script> 
+        <link href="modal.css" rel="stylesheet">
+        <title>Courses</title>
+    </head>
+    <body>
+        <div class="container-fluid justify-content-center">
+            <nav class="navbar text-center">
+                <div class="col">
+                    <h1 class="font-weight-bold text-dark text-center">ASESSE</h1>
+            </nav>
+        </div>
+
+
+        <div class="groupSize container-fluid justify-content-center text-center">
+
+
+
+<div id = "heading"></div>
+<div id = "courseInfo"></div>
+
+<!-- Apply this style to elements that should not be printed, i.e. buttons   -->
+<style>
+.studentForm{
+     display: none; 
+}
+</style>
+
+
+<h2>Groups <button class="btn btn-default btnSize bg-dark text-white" id = "myBtn">Add Group</button></h2> 
+
+<!-- Create a new Student Form -->
+<div id="newStudent" class ="studentForm">
+    <form class="pure-form" action ="javascript:addStudent(this)">
+    <fieldset>
+        <legend>Add Student to Group</legend>
+        <input type="text" placeholder = "Student Name" name="studentName" id="studentName" required> 
+        <button type="submit" class="pure-button pure-button-primary">Confirm</button>
+    </fieldset>
+</form>
+  </div>
+
+<div class="text-right"  id = "groupInfo"></div>
+
+
+
+<!-- Create a New Group Form  -->
+<div id="myModal" class="modal">
+
+
+  <div class="modal-content modal-dialog modal-md">
+    <span class="close">&times;</span>
+    <form class="pure-form" action ="javascript:addGroup(this)">
+    <fieldset>
+        <legend>Create New Group</legend>
+        <input class="form-control selectSize" type="text" placeholder = "Group Name" name="groupName" id="groupName" required> 
+        <button type="submit" class="btn btn-default pure-button pure-button-primary">Confirm</button>
+    </fieldset>
+</form>
+  </div>
+
+<script> 
+
+
+// Check Cookie for access
+var accessCode = getCookie("ASSESE");
+        
+if (accessCode != -1){
+    window.location = "instructor.html";
+}
+
+// Access course ID passed in url
+
+var courseID = window.location.href.split("=")[1]
+var currentGroup;
+
+// Modal Script //////////////////////////////////////////
+// Get the modal
+var modal = document.getElementById('myModal');
+
+
+// Get the button that opens the modal
+var btn = document.getElementById("myBtn");
+
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("close")[0];
+
+
+// When the user clicks on the button, open the modal 
+btn.onclick = function() {
+    modal.style.display = "block";
+}
+
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+    modal.style.display = "none";
+}
+
+
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+
+}
+
+
+/// Populate Page  /////////////
+
+
+var data = {course_ID: courseID};
+html2 = '';
+counter = 0;
+
+
+// Course Information /////
+
+$.post("instructor.php/courseInfo", data)
+.done(function(data){
+    var html = "<h1>Course Name: " + data[0]['Name'] + " </h1>";
+    html += "<button class=\"btn btn-default btnSize bg-dark text-white\" onclick = 'mainPage()'>Main Page</button>";
+    
+    html += "<button class=\"btn btn-default bg-secondary text-white btnSize\" onclick = 'courseReportPage()'>Course Report</button>";
+    html += "<button class=\"btn btn-default btnSize bg-dark text-white\" onclick = 'logOut()'>Log Out</button>";
+
+    $('#heading').html(html);
+    html = "<BR><BR>"
+    html += "Number of Students: ";
+    html += data[0]['Number of Students'];
+    html += "<BR> Number of Students who have completed group review: ";
+    html += data[0]['Reviews Submitted'];
+    html += "<BR> Course Reviews Progress: ";
+
+    if (data[0]['Number of Students'] == 0){
+        html += "0 %"
+    }
+    else {
+        html += data[0]['Reviews Submitted']/data[0]['Number of Students'] * 100 + " %";
+    }
+
+    $('#courseInfo').html(html);
+
+})
+
+// Group Information ////
+
+$.post("instructor.php/groupNameInfo", data)
+.done(function(data){
+    var length = 0;
+    for (var key in data){
+        if(data.hasOwnProperty(key)){
+            length++;
+        }
+    }
+
+    for (var i=0; i<length; i++){
+  
+        html2 += 'Group Name: '
+        html2 += data[i]["GroupName"]
+        html2 += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+
+        html2 += '<button class=\"btn btn-default btnSize bg-dark text-white\" onclick = "groupReportPage('
+        html2 += data[i]["Group ID"]
+        html2 += ')"> Group Report </button>'
+        
+        html2 += '<button class=\"btn btn-default btnSize bg-secondary text-white\" onclick = "addStudentForm('
+        html2 += data[i]["Group ID"]
+        html2 += ')"> Add Student </button>'
+
+        html2 += '<button class=\"btn btn-default btnSize bg-danger text-white\" onclick = "removeGroup('
+        html2 += data[i]["Group ID"]
+        html2 += ')"> Remove Group </button>'
+
+
+        html2 += '<p id ="' + i + '">' + data[i]["Group ID"] + '</p>'
+        html2 += '<br>'
+
+
+
+}
+  $('#groupInfo').html(html2);
+
+// Student Names Information
+displayNames(length);
+
+   
+})
+
+
+// Functions /////////////////////
+
+// Populate groups with Student Names
+
+function displayNames(length){
+
+    console.log ("In Function displayNames()")
+   
+    for (var i=0; i<length; i++){
+        var groupID = document.getElementById(i).innerHTML;
+      
+        var data2 = {group_ID: groupID}; 
+        console.log("Group ID =" + groupID);
+
+       
+    $.post("instructor.php/groupStudentInfo", data2)
+.done(function(data2){
+    var html3 = ''
+    var length2 = 0;
+    for (var key2 in data2){
+        if(data2.hasOwnProperty(key2)){
+            length2++;
+        }
+    }       
+
+for (var j=0; j<length2; j++){
+    html3 += data2[j]['Student Name'] 
+    html3 += "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"
+
+    html3 += '<button class=\"btn btn-default btnSize bg-dark text-white\" onclick = "studentReportPage('
+    html3 += data2[j]["Student ID"]
+    html3 += ')"> Student Report </button>'
+
+    html3 += '<button class=\"btn btn-default btnSize bg-danger text-white\" onclick = "removeStudent('
+    html3 += data2[j]["Student ID"]
+    html3 += ')"> Remove Student </button>'
+
+    
+    html3 += "<BR>"
+      
+}
+    console.log("Element Counter = " + counter)
+    console.log("Html inserted: " + html3);
+    string = '#' + counter;
+    $(string).html(html3)
+    ++counter
+  
+})
+
+ for (var j=0; j<100; j++)
+    {console.log("delay")}
+}
+}
+
+// Add Group to Course
+
+function addGroup(){
+    var data = {group_name: groupName.value,
+                course_ID: courseID};
+	
+    $.post("instructor.php/newGroup", data)
+                   .done(function (data) {})
+    
+    alert('New Group Created!');
+    modal.style.display = "none";
+    window.location = "courses.html?cID=" + courseID
+
+}
+
+// Remove Group from Course
+
+function removeGroup(groupID){
+    var data = {group_ID: groupID,
+                course_ID: courseID};
+
+    $.post("instructor.php/removeGroup", data)
+.done(function(data){
+      window.location = "courses.html?cID=" + courseID
+})
+}
+
+// Display the Add Student Form
+
+function addStudentForm(groupID){
+    currentGroup = groupID;
+    $("#newStudent").fadeIn();
+}
+
+// Add Student to Group and Course
+
+function addStudent(){
+        var data = {course_ID: courseID, 
+                    student_name: studentName.value,
+                    group_ID: currentGroup};
+
+         $.post("instructor.php/newStudent", data)
+                   .done(function (data) {})
+    
+    alert('New Student Created!');
+    $("#newStudent").fadeOut();
+    window.location = "courses.html?cID=" + courseID
+}
+
+// Remove Student from Group and Course
+
+function removeStudent(studentID){
+    var data = {student_ID: studentID,
+                course_ID: courseID}
+
+  $.post("instructor.php/removeStudent", data)
+.done(function(data){
+    window.location = "courses.html?cID=" + courseID
+})
+}
+
+// Goto Student Report Page
+
+function studentReportPage(studentID){
+    window.location = "studentReport.html?sID=" + studentID
+}
+
+// Goto Group Report Page
+
+function groupReportPage(groupID){
+    window.location = "groupReport.html?gID=" + groupID
+}
+
+// Goto Course Report Page
+
+function courseReportPage(){
+    window.location = "courseReport.html?cID=" + courseID
+}
+
+</script>
+</div>
+</body>
+<footer>
+        <div class="footer">© 2018 Copyright</div>
+    </footer>
+</html>

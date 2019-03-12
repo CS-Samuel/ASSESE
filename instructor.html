@@ -1,0 +1,74 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="./project_css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+            crossorigin="anonymous">
+        <link rel="stylesheet" href="./project_css/studenthomepage.css">
+        <title>Instructor Login Page</title>
+        <script src ="cookie.js"></script>
+        <script src="jquery-3.3.1.js"></script> 
+        <script src="jquery-3.3.1.min.js"></script> 
+    </head>
+    
+    <body>
+        <div class="container-fluid justify-content-center">
+            <nav class="navbar text-center">
+                <div class="col">
+                    <h1 class="font-weight-bold text-dark text-center">ASESSE</h1>
+            </nav>
+        </div>
+        <h1 class="text-center pt-5">Welcome to the Student Peer Evaluation Professor Login</h1>
+        <h1 class="text-center">Professor Password: admin</h1>
+        <h1 class="text-center"><a href="https://samuelweems.com/PeerEvaluation/student.php">Student Portal</a></h1>
+        <div class="form-entry">
+        <form  class="selectSize" action ="javascript:checkPassword(this)">
+            <div class="form-group selectSize">
+               
+                    <legend class="text-center">Admin Password</legend>
+                    <input type="text" placeholder = "Enter Password" name="pass" id="pass" class="form-control" required> 
+                    <button type="submit" class="form-control bg-dark text-white">Confirm</button>
+                
+            </div>
+        </form>
+        </div>
+    </body>
+
+
+
+<script> 
+
+// Function checks if the inputed password is correct
+
+function checkPassword(){
+    var data = {password: pass.value}
+   
+    $.get("instructor.php/adminPassword")
+    .done(function(data){
+        if (pass.value == data){
+            setAccess();
+            window.location = "instructorMain.html";
+        }
+        else{
+            alert("Invalid Password");
+        }
+})
+
+}
+
+
+// Sets Cookie to instructor privileges, called upon successful password entry
+     
+function setAccess(){
+    document.cookie = "ASSESE=-1"
+    var test = getCookie("ASSESE"); 
+    console.log("Permission Set to: " + test);
+}
+
+ </script>
+
+<footer>
+        <div class="footer">© 2018 Copyright</div>
+    </footer>
+</html>
